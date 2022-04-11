@@ -1,19 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shopping.Data;
 using Shopping.Data.Entities;
 
 namespace Shopping.Controllers
 {
+   [Authorize(Roles ="Admin")]
     public class CategoriesController : Controller
     {
         private readonly DataContext _context;
-
+        
         public CategoriesController(DataContext context)
         {
             _context = context;
         }
-
+       
         public async Task<IActionResult> Index()
         {
             return View(await _context.Categories.ToListAsync());
@@ -22,7 +24,7 @@ namespace Shopping.Controllers
         {
             return View();
         }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Category category)
@@ -54,7 +56,7 @@ namespace Shopping.Controllers
             return View(category);
 
         }
-
+       
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
