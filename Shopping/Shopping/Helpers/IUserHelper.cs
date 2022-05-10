@@ -28,13 +28,13 @@ namespace Shopping.Helpers
 
         Task<IdentityResult> UpdateUserAsync(User user);
 
-       // Task<string> GenerateEmailConfirmationTokenAsync(User user);
-/*
+        Task<string> GenerateEmailConfirmationTokenAsync(User user);
+
         Task<IdentityResult> ConfirmEmailAsync(User user, string token);
 
         Task<string> GeneratePasswordResetTokenAsync(User user);
 
-        Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);*/
+        Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
         /*Task<User> GetUserAsync(string email);
 
         Task<IdentityResult> AddUserAsync(User user, string password);
