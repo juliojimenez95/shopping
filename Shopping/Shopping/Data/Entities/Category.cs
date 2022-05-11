@@ -10,5 +10,8 @@ namespace Shopping.Data.Entities
         [MaxLength(50, ErrorMessage = "el campo {0}  debe tener maximo  {1}  caracteres.")]
         [Required(ErrorMessage = "El campo {0} es oblgatorio.")]
         public string Name { get; set; }
+
+        public ICollection<ProductCategory> ProductCategories { get; set; }
+
     }
 }
