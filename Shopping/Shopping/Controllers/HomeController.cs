@@ -29,7 +29,7 @@ namespace Shopping.Controllers
         }
 
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
             List<Product> products = await _context.Products
                 .Include(p => p.ProductImages)
