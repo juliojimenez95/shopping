@@ -2,9 +2,8 @@
 
 @{
     ViewData["Title"] = "Producto";
-    
+    Layout = null;
 }
-
 
 <flash dismissable="true" />
 
@@ -21,8 +20,8 @@
         </div>
     </form>
 </div>
-    
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
