@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Shopping.Enums;
+using Shopping.Helpers;
 using System.ComponentModel.DataAnnotations;
 
 namespace Shopping.Data.Entities
@@ -35,8 +36,8 @@ namespace Shopping.Data.Entities
         //TODO: Pending to put the correct paths
         [Display(Name = "Foto")]
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://localhost:7281/images/noimage.png"
-            : $"https://shoppingzulu.blob.core.windows.net/users/{ImageId}";
+            ? "/images/noimage.png"
+            : BlobUrlHelper.GetBlobUrl("users", ImageId);
 
         [Display(Name = "Tipo de usuario")]
         public UserType UserType { get; set; }

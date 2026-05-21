@@ -47,7 +47,8 @@ namespace Shopping.Data
             User user = await _userHelper.GetUserAsync(email);
             if (user == null)
             {
-                Guid imageId = await _blobHelper.UploadBlobAsync($"{Environment.CurrentDirectory}\\wwwroot\\images\\users\\{image}", "users");
+                string userImagePath = Path.Combine(Environment.CurrentDirectory, "wwwroot", "images", "users", image);
+                Guid imageId = await _blobHelper.UploadBlobAsync(userImagePath, "users");
                 user = new User
                 {
                     FirstName = firstName,
@@ -283,7 +284,8 @@ namespace Shopping.Data
 
             foreach (string? image in images)
             {
-                Guid imageId = await _blobHelper.UploadBlobAsync($"{Environment.CurrentDirectory}\\wwwroot\\images\\products\\{image}", "products");
+                string productImagePath = Path.Combine(Environment.CurrentDirectory, "wwwroot", "images", "products", image);
+                Guid imageId = await _blobHelper.UploadBlobAsync(productImagePath, "products");
                 prodcut.ProductImages.Add(new ProductImage { ImageId = imageId });
             }
 

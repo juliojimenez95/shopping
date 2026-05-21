@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Shopping.Helpers;
 
 namespace Shopping.Data.Entities
 {
@@ -14,8 +15,8 @@ namespace Shopping.Data.Entities
         //TODO: Pending to change to the correct path
         [Display(Name = "Foto")]
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://localhost:7281/images/noimage.png"
-            : $"https://shoppingzulu.blob.core.windows.net/products/{ImageId}";
+            ? "/images/noimage.png"
+            : BlobUrlHelper.GetBlobUrl("products", ImageId);
 
     }
 }

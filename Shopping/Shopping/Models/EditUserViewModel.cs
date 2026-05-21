@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Shopping.Helpers;
 
 namespace Shopping.Models
 {
@@ -37,8 +38,8 @@ namespace Shopping.Models
 
         [Display(Name = "Foto")]
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://localhost:7281/images/noimage.png"
-            : $"https://shoppingzulu.blob.core.windows.net/users/{ImageId}";
+            ? "/images/noimage.png"
+            : BlobUrlHelper.GetBlobUrl("users", ImageId);
 
         [Display(Name = "Image")]
         public IFormFile? ImageFile { get; set; }

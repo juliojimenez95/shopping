@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Shooping.Helpers;
 using Shopping.Data;
 using Shopping.Data.Entities;
@@ -7,6 +8,7 @@ using Shopping.Helpers;
 using Vereyon.Web;
 
 var builder = WebApplication.CreateBuilder(args);
+var isDocker = builder.Environment.IsEnvironment("Docker");
 
 
 builder.Services.AddControllersWithViews();
@@ -19,7 +21,7 @@ builder.Services.AddDbContext<DataContext>(o =>
 builder.Services.AddIdentity<User, IdentityRole>(cfg =>
 {
     cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
-    cfg.SignIn.RequireConfirmedEmail = true;
+    cfg.SignIn.RequireConfirmedEmail = !isDocker;
 
     cfg.User.RequireUniqueEmail = true;
     cfg.Password.RequireDigit = false;
@@ -27,7 +29,7 @@ builder.Services.AddIdentity<User, IdentityRole>(cfg =>
     cfg.Password.RequireLowercase = false;
     cfg.Password.RequireNonAlphanumeric = false;
     cfg.Password.RequireUppercase = false;
-    //cfg.Password.RequiredLength = 0; tamaÒo del password
+    //cfg.Password.RequiredLength = 0; tamaùo del password
     cfg.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     cfg.Lockout.MaxFailedAccessAttempts = 3;
     cfg.Lockout.AllowedForNewUsers = true;
@@ -46,7 +48,14 @@ builder.Services.AddTransient<SeedDb>();
 builder.Services.AddFlashMessage();
 builder.Services.AddScoped<IUserHelper, UserHelper>();
 builder.Services.AddScoped<ICombosHelper, CombosHelper>();
-builder.Services.AddScoped<IBlobHelper, BlobHelper>();
+if (builder.Configuration.GetValue<bool>("Blob:UseLocalStorage"))
+{
+    builder.Services.AddScoped<IBlobHelper, LocalBlobHelper>();
+}
+else
+{
+    builder.Services.AddScoped<IBlobHelper, BlobHelper>();
+}
 builder.Services.AddScoped<IMailHelper, MailHelper>();
 builder.Services.AddScoped<IOrdersHelper, OrdersHelper>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
@@ -74,8 +83,21 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 app.UseStatusCodePagesWithReExecute("/error/{0}");
-app.UseHttpsRedirection();
+if (!isDocker)
+{
+    app.UseHttpsRedirection();
+}
 app.UseStaticFiles();
+if (builder.Configuration.GetValue<bool>("Blob:UseLocalStorage"))
+{
+    string blobPath = Path.Combine(app.Environment.WebRootPath, "blob");
+    Directory.CreateDirectory(blobPath);
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        RequestPath = "/blob",
+        FileProvider = new PhysicalFileProvider(blobPath)
+    });
+}
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

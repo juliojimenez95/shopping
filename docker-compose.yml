@@ -1,0 +1,42 @@
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: shopping-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Shopping@Local123"
+    ports:
+      - "1433:1433"
+    volumes:
+      - shopping-sqldata:/var/opt/mssql
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'Shopping@Local123' -C -Q 'SELECT 1' || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
+
+  web:
+    build:
+      context: ./Shopping/Shopping
+      dockerfile: Dockerfile
+    container_name: shopping-web
+    ports:
+      - "8081:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: "Server=db;Database=Shopping1;User Id=sa;Password=Shopping@Local123;TrustServerCertificate=True;MultipleActiveResultSets=true"
+      Blob__UseLocalStorage: "true"
+      Blob__PublicBaseUrl: "http://localhost:8081/blob"
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  shopping-sqldata:
